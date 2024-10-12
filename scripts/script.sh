@@ -85,16 +85,74 @@ restoreBackupFunc() {
 	esac
 }
 
+timeshiftAutoBackupsFunc() {
+	clear
+	echo -e "\e[32m| 1 - Create autobackup (hourly) / Создать автобэкап (почасовые)\e[0m\n"
+	echo -e "\e[32m| 2 - Create autobackup (daily) / Создать автобэкап (дневные)\e[0m\n"
+	echo -e "\e[32m| 3 - Create autobackup (weekly) / Создать автобэкап (еженедельные)\e[0m\n"
+	echo -e "\e[32m| 4 - Create autobackup (monthly) / Создать автобэкап (ежемесячные)\e[0m\n"
+	echo -e "\e[32m| 5 - Create autobackup (boot) / Создать автобэкап (при запуске системы)\e[0m\n"
+	echo -e "\e[34m| 6 - Back / Назад\n\e[0m\n"
+	read -p "Enter value / Введите действие: " sub_action
+	case $sub_action in
+		1)
+			clear
+			sudo timeshift --create --tags H
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			break
+		;;
+		2)
+			clear
+			sudo timeshift --create --tags D
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			break
+		;;
+		3)
+			clear
+			sudo timeshift --create --tags W
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			break
+		;;
+		4)
+			clear
+			sudo timeshift --create --tags M
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			break
+		;;
+		5)
+			clear
+			sudo timeshift --create --tags B
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			break
+		;;
+		6)
+			clear
+			break
+		;;
+		*)
+			clear
+			echo -e "\n\e[31m(-_-)/ |Incorrect value / Неправильный ввод|\e[0m"
+			break
+		;;
+	esac
+}
+
 autoBackupFunc() {
 	clear
 	echo -e "En: \e[34mHere you can create autobackups.\e[0m"
 	echo -e "Ru: \e[34mЗдесь Вы можете настроить бэкапы по расписанию.\e[0m\n"
-	echo -e "\e[32m| 1 - Create autobackup / Создать автобэкап\e[0m\n"
-	echo -e "\e[32m| 2 - Clear autobackups / Очистить бэкапы по расписанию\e[0m\n"
-	echo -e "\e[34m| 3 - Back / Назад\n\e[0m\n"
+	echo -e "\e[32m| 1 - Create autobackup (Timeshift original) / Создать автобэкап (из Timeshift)\e[0m\n"
+	echo -e "\e[32m| 2 - Create autobackup / Создать автобэкап\e[0m\n"
+	echo -e "\e[32m| 3 - Clear autobackups / Очистить бэкапы по расписанию\e[0m\n"
+	echo -e "\e[34m| 4 - Back / Назад\n\e[0m\n"
 	read -p "Enter value / Введите действие: " sub_action
 	case $sub_action in
 		1)
+			clear
+			timeshiftAutoBackupsFunc
+		;;
+		
+		2)
 			clear
 			read -p "Comment / Введите комментарий для бэкапа: " comment
 			read -p "Month / Введите месяц (число, например, 9 для сентября): " month
@@ -117,7 +175,7 @@ autoBackupFunc() {
 			break
 		;;
 
-		2)
+		3)
 			clear
 			echo -e "\n\e[34m### \e[32mCOMMANDS IN CRON(Script delete this commands)\e[0m / \e[32mКОМАНДЫ CRON(Скрипт удалит команды снизу)\e[34m ###\e[0m\n"
 			echo -e "\e[31m$(sudo crontab -l)\e[0m"
@@ -133,8 +191,9 @@ autoBackupFunc() {
 		;;
 
 	       *)
-	       		echo "Incorrect value / Неверный ввод, попробуйте снова."
-	       		break
+			clear
+			echo -e "\n\e[31m(-_-)/ |Incorrect value / Неправильный ввод|\e[0m"
+			break
 	       	;;
 	esac
 }
