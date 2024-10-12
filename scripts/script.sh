@@ -172,7 +172,6 @@ autoBackupFunc() {
 			crontab -l > cron
 			(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo timeshift --create --comments \"$comment\"") >> cron
 			(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo grub-mkconfig -o /boot/grub/grub.cfg") >> cron
-			(crontab -l 2>/dev/null; echo "$minute $hour * $month $day echo "Backup \"$comment\" created successfully / Бэкап \"$comment\" успешно создан." | mailx -s "BACKUP-REPORT" "$EMAIL"") >> cron
 			sudo crontab cron
 			rm cron
 			break
@@ -229,25 +228,28 @@ deleteBackupFunc() {
 	esac
 }
 
-changeEmailFunc() {
+changeSCFAAWPFunc() {
 	clear
-	EXPECTED_ENTRY="user_email"
+	EXPECTED_STRING="isEnableSCFAAWP"
 
 	if [[ -f $CONF ]]; then
 		echo -e "\n########################################################"
 		echo "$CONF file found / Файл $CONF найден"
 
-		if grep -q "^$EXPECTED_ENTRY=" "$CONF"; then
-			echo "The $EXPECTED_ENTRY entry was found in the file / Запись $EXPECTED_ENTRY найдена в файле"
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			echo "The $EXPECTED_STRING entry was found in the file / Запись $EXPECTED_STRING найдена в файле"
+			SCFAAWP=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+			
+			if [ $SCFAAWP = "yes" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+				echo -e "\e[32mNow disabled / Сейчас отключено\e[0m"
+			elif [ $SCFAAWP = "no" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+				echo -e "\e[32mNow enabled / Сейчас включено\e[0m"
+			fi
 
-			read -p "Enter email / Введите email:" EMAIL
-			echo "Updating the $EXPECTED_ENTRY entry with the new value / Обновление записи $EXPECTED_ENTRY новым значением"
-
-			sudo sed -i "s/^$EXPECTED_ENTRY=.*/$EXPECTED_ENTRY=\"$EMAIL\"/" "$CONF"
-
-			echo "Entry updated / Запись обновлена"
 		else
-			echo "Entry $EXPECTED_ENTRY not found in the file / Запись $EXPECTED_ENTRY не найдена в файле"
+			echo "Entry $EXPECTED_STRING not found in the file / Запись $EXPECTED_STRING не найдена в файле"
 		fi
 	else
 		echo "$CONF file not found / Файл $CONF не найден"
@@ -275,14 +277,12 @@ while true; do
 echo -e "\e[32m"
 
 cat << "EOF"
-  _      _                                _        _                _
- | |    (_)                              | |      | |              | |
- | |     _ _ __  _   ___  __   __ _ _   _| |_ ___ | |__   __ _  ___| | ___   _ _ __
- | |    | | '_ \| | | \ \/ /  / _` | | | | __/ _ \| '_ \ / _` |/ __| |/ / | | | '_ \
- | |____| | | | | |_| |>  <  | (_| | |_| | || (_) | |_) | (_| | (__|   <| |_| | |_) |
- |______|_|_| |_|\__,_/_/\_\  \__,_|\__,_|\__\___/|_.__/ \__,_|\___|_|\_\\__,_| .__/
-	                                                                      | |
-	                                                                      |_|
+  _______ _    _ _____  ____   ____   _____ _    _ _____ ______ _______ 
+ |__   __| |  | |  __ \|  _ \ / __ \ / ____| |  | |_   _|  ____|__   __|
+    | |  | |  | | |__) | |_) | |  | | (___ | |__| | | | | |__     | |   
+    | |  | |  | |  _  /|  _ <| |  | |\___ \|  __  | | | |  __|    | |   
+    | |  | |__| | | \ \| |_) | |__| |____) | |  | |_| |_| |       | |   
+    |_|   \____/|_|  \_\____/ \____/|_____/|_|  |_|_____|_|       |_|   
 EOF
 
 echo -e "\e[0m"
@@ -339,13 +339,14 @@ echo -e "\e[0m"
 		;;
 		2)
 			clear
-			echo -e "\n\e[32m| 1 - Change Email / Изменить почту\n\e[0m"
+			echo -e "\n\e[32m| 1 - Enable/Disable snapshots for every action with the package / Включить/Выключить снимки для каждого действия с пакетом\n\e[0m"
 			echo -e "\e[32m| 2 - Delete script / Удалить скрипт\n\e[0m"
 			echo -e "\e[34m| 3 - Back / Назад\n\e[0m\n"
 			read -p "Enter value / Введите действие: " settings_action
 			case $settings_action in
 			1)
-				changeEmailFunc
+				changeSCFAAWPFunc
+				break
 			;;
 			2)
 				deleteScriptFunc
