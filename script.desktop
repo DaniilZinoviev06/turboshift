@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Timeshift
+Comment=Console interface Timeshift(grub auto update)
+Exec=/home/daniil/Advanced-Timeshift-CLI/scripts/script.sh
+Icon=/home/daniil/Advanced-Timeshift-CLI/logo.jpg
+Terminal=true
