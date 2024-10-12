@@ -199,13 +199,11 @@ deleteScriptFunc() {
 	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications/
 	TARGET_DIR=$(realpath "$SCRIPT_DIR/..")
 	if [ -d "$TARGET_DIR" ]; then
-		echo "Удаление директории: $TARGET_DIR"
 		rm -rf "$TARGET_DIR"
-		echo "Директория удалена."
+		echo "The directory has been deleted / Директория удалена"
 		exit
-		cd ~
 	else
-		echo "Ошибка: $TARGET_DIR не является допустимой директорией."
+		echo "error / Ошибка"
 	fi
 }
 ######################################
