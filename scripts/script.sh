@@ -287,7 +287,7 @@ EOF
 
 echo -e "\e[0m"
 
-	echo -e "\n\e[33mUser:\e[0m $(whoami) \e[34m|\e[0m \e[33mTimeshift:\e[0m $(timeshift --version)"
+	echo -e "\n\e[33mUser:\e[0m $(whoami) \e[34m|\e[0m \e[33mTimeshift:\e[0m $(timeshift --version) \e[34m|\e[0m \e[33mAuthor:\e[0m https://github.com/DaniilZinoviev06 \e[34m"
 
 	echo -e "\e[32m\n| 1 - Backups / Бэкапы\n\e[0m"
 	echo -e "\e[32m| 2 - Settings / Настройки\n\e[0m"
