@@ -1,9 +1,11 @@
-![изображение](https://github.com/user-attachments/assets/193f8b73-2205-408b-b57d-4a3d7065e762)<div align="center" class="screenshots" markdown="1" style>
+<div align="center" class="screenshots" markdown="1" style>
 
 ![main screen](screenshots/screenshot.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
-   
+
+![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
+
 </div>
 
 # :tornado: TURBOSHIFT
@@ -62,13 +64,14 @@ chmod +x script.sh
 </details>
 
 ## 🖥️: Screenshots
-![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
 
 <div align="center" class="screenshots" markdown="1" style>
 
-![main screen](screenshots/screen_main.png)
+![screen1](screenshots/screen_main.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
+
+![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
    
 </div>
 
