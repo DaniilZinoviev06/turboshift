@@ -1,5 +1,8 @@
 #! /bin/bash
-source ./script.sh
+###
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+CONF="$(realpath "$SCRIPT_DIR/../setgs.conf")"
+###
 
 ####### SETTINGS FUNCTIONS ##########
 CheckConfDistroFunc() {

@@ -28,7 +28,7 @@ EOF
 source $SCRIPT_DIR/settings.sh
 echo -e "\e[36m####################################################################################\e[0m"
 ###
-source $SCRIPT_DIR/grubupd.sh
+sudo grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "\e[36m####################################################################################\e[0m"
 ###
 
@@ -46,7 +46,7 @@ createBackupFunc() {
 		echo -e "\n"
 		read -p "Enter comment / Введите комментарий для бэкапа: " comment
 		sudo timeshift --create --comments "$comment"
-		source $SCRIPT_DIR/grubupd.sh
+		sudo grub-mkconfig -o /boot/grub/grub.cfg
 		break
 	;;
 	2)
@@ -96,31 +96,31 @@ timeshiftAutoBackupsFunc() {
 		1)
 			clear
 			sudo timeshift --create --tags H
-			source $SCRIPT_DIR/grubupd.sh
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
 			break
 		;;
 		2)
 			clear
 			sudo timeshift --create --tags D
-			source $SCRIPT_DIR/grubupd.sh
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
 			break
 		;;
 		3)
 			clear
 			sudo timeshift --create --tags W
-			source $SCRIPT_DIR/grubupd.sh
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
 			break
 		;;
 		4)
 			clear
 			sudo timeshift --create --tags M
-			source $SCRIPT_DIR/grubupd.sh
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
 			break
 		;;
 		5)
 			clear
 			sudo timeshift --create --tags B
-			source $SCRIPT_DIR/grubupd.sh
+			sudo grub-mkconfig -o /boot/grub/grub.cfg
 			break
 		;;
 		6)
