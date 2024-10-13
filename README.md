@@ -1,44 +1,66 @@
-<div align="center" class="header" markdown="1" style>
+<div align="center" class="screenshots" markdown="1" style>
+
+![main screen](screenshots/screenshot.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
    
-
-   
-   
 </div>
 
-# [Example:create backup](#create-backup)
+# :tornado: TURBOSHIFT
+Turboshift is a handy Timeshift-based script that automates the creation of snapshots and updating the GRUB bootloader before installing any package on your system. It is a tool designed to improve the security and reliability of your workflow by providing the ability to quickly restore your system if problems arise after installing the software.
 
-<div align="center">
-  <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXBzdXNnMjNwamRwY3dkdWg1MmtlZTV4MDN2bXo1bzA1eGU2eHl3MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6WjLFORjvmoZEHOQNi/giphy.gif" alt="example"/>
-</div>
+## :rocket: Features
+* Automatic creation of snapshots
+* Updating the GRUB bootloader
+* Automatic setting
 
-# [How to install](#how-to-install)
+## :warning: Recommendation
+`Please delete the script through the script settings`
+> This is necessary so that later there are no problems with the timeshift shortcut
 
-## Copy the project
-
+## :computer: Installation
+First copy the repository:
+```bash
+git clone https://github.com/DaniilZinoviev06/turboshift.git
+cd turboshift
 ```
-cd ~
-git clone https://github.com/DaniilZinoviev05/Console-interface-timeshift.git
-cd Scripts
-```
-or
-
-```
-https://github.com/DaniilZinoviev05/Console-interface-timeshift/releases/tag/v1.0.0
-```
-
-## Make executable and run
-```
+Next, run the `script.sh` to install the necessary dependencies and initial configuration
+```bash
 chmod +x script.desktop
+cd scripts
 chmod +x script.sh
-./script.sh 
+./script.sh
 ```
-# [Script features](#script-features)
 
-- All standard timeshift features, including scheduled backups using cron
-- Email notifications with reminders and notifications about creating a backup
+<div align="center" class="screenshot" markdown="1" style>
 
-# [Supported distribution](#supported-distro)
+![settings-screenshot](screenshots/settings.png)
+</div>
 
-- Arch and distributions based on it
+## :coffin: Uninstall
+
+<details>
+<summary>:toolbox: Using settings</summary> 
+   
+   </br>
+   
+   > To delete you can use the option in the settings </br>
+</details>
+
+`or`
+<details>
+<summary>:superhero: independently</summary>
+   
+   </br>
+   
+   Go to the directory with the project. Next: </br>
+   ```bash
+   sudo mv timeshift-gtk.desktop /usr/share/applications/
+   sudo mv /usr/share/applications/script.desktop /your/path/to/turboshift
+   sudo rm -rf /your/path/to/turboshift
+   ```
+</details>
+
+
+## :bookmark: License
+![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
