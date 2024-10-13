@@ -278,6 +278,7 @@ deleteScriptFunc() {
 	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications/
 	TARGET_DIR=$(realpath "$SCRIPT_DIR/..")
 	if [ -d "$TARGET_DIR" ]; then
+		sudo rm -rf /etc/pacman.d/hooks
 		rm -rf "$TARGET_DIR"
 		echo "The directory has been deleted / Директория удалена"
 		exit
