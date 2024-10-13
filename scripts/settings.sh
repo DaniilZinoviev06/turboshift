@@ -1,14 +1,5 @@
 #! /bin/bash
-
-###
-SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-CONF="$(realpath "$SCRIPT_DIR/../setgs.conf")"
-###
-
-if [[ -f $CONF ]]; then
-	source "$CONF"
-	echo "User email / Почта пользователя: $user_email"
-fi
+source ./script.sh
 
 ####### SETTINGS FUNCTIONS ##########
 CheckConfDistroFunc() {

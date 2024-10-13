@@ -2,10 +2,7 @@
 
 ###
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-echo $SCRIPT_DIR
 CONF="$(realpath "$SCRIPT_DIR/../setgs.conf")"
-echo $CONF
-echo "$(realpath "$SCRIPT_DIR/..")"
 ###
 echo -e "\e[36m####################################################################################\e[0m"
 
@@ -14,7 +11,6 @@ cat << "EOF"
 ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌ ▐▌▐▌   ▐▌   ▐▌
 ▐▛▀▘ ▐▛▀▜▌▐▌   ▐▛▚▖ ▐▛▀▜▌▐▌▝▜▌▐▛▀▀▘ ▝▀▚▖
 ▐▌   ▐▌ ▐▌▝▚▄▄▖▐▌ ▐▌▐▌ ▐▌▝▚▄▞▘▐▙▄▄▖▗▄▄▞▘
-
 EOF
 
 echo "Install the required packages / Установим необходимы пакеты..."
@@ -27,7 +23,6 @@ cat << "EOF"
 ▐▌   ▐▌     █    █    █  ▐▛▚▖▐▌▐▌   ▐▌
  ▝▀▚▖▐▛▀▀▘  █    █    █  ▐▌ ▝▜▌▐▌▝▜▌ ▝▀▚▖
 ▗▄▄▞▘▐▙▄▄▖  █    █  ▗▄█▄▖▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘
-
 EOF
 
 source $SCRIPT_DIR/settings.sh
@@ -228,6 +223,23 @@ deleteBackupFunc() {
 	esac
 }
 
+SCFAAWPFunc() {
+HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
+sudo bash -c "cat > $HOOK_FILE" << 'EOF'
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Creating snapshot before pacman transaction...
+When = PreTransaction
+Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before pacman transaction""
+EOF
+}
+
 changeSCFAAWPFunc() {
 	clear
 	EXPECTED_STRING="isEnableSCFAAWP"
@@ -242,9 +254,12 @@ changeSCFAAWPFunc() {
 			
 			if [ $SCFAAWP = "yes" ]; then
 				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+				sudo rm -rf /etc/pacman.d/hooks
 				echo -e "\e[32mNow disabled / Сейчас отключено\e[0m"
 			elif [ $SCFAAWP = "no" ]; then
 				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+				sudo mkdir /etc/pacman.d/hooks
+				SCFAAWPFunc pacman
 				echo -e "\e[32mNow enabled / Сейчас включено\e[0m"
 			fi
 
