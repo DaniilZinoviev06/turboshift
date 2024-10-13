@@ -60,3 +60,7 @@ chmod +x script.sh
    sudo rm -rf /your/path/to/turboshift
    ```
 </details>
+
+
+## :bookmark: License
+![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
