@@ -1,7 +1,10 @@
-# [Example:setting](#example-setting)
+<div align="center" class="header" markdown="1" style>
 
-<div align="center">
-  <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2pvNXI4ZHdmZTNxZXU4anZ2NDJyNmVmbzhtcnphMXZpaWw5dG90cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7BcROBphzoJQZP1yDP/giphy.gif" alt="example"/>
+![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
+   
+
+   
+   
 </div>
 
 # [Example:create backup](#create-backup)
