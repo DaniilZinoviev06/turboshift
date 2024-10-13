@@ -12,6 +12,7 @@
 Turboshift is a handy Timeshift-based script that automates the creation of snapshots and updating the GRUB bootloader before installing any package on your system. It is a tool designed to improve the security and reliability of your workflow by providing the ability to quickly restore your system if problems arise after installing the software.
 
 ## :rocket: Features
+* Automatic creation of snapshots before any action with the package
 * Automatic creation of snapshots
 * Updating the GRUB bootloader
 * Automatic setting
