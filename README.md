@@ -3,13 +3,16 @@
 ![main screen](screenshots/screenshot.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
-   
+
+![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
+
 </div>
 
 # :tornado: TURBOSHIFT
 Turboshift is a handy Timeshift-based script that automates the creation of snapshots and updating the GRUB bootloader before installing any package on your system. It is a tool designed to improve the security and reliability of your workflow by providing the ability to quickly restore your system if problems arise after installing the software.
 
 ## :rocket: Features
+* Automatic creation of snapshots before any action with the package
 * Automatic creation of snapshots
 * Updating the GRUB bootloader
 * Automatic setting
@@ -61,6 +64,16 @@ chmod +x script.sh
    ```
 </details>
 
+## 🖥️: Screenshots
 
-## :bookmark: License
+<div align="center" class="screenshots" markdown="1" style>
+
+![screen1](screenshots/screen_main.png)
+
+![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
+
 ![GitHub](https://img.shields.io/github/license/DaniilZinoviev06/turboshift?style=for-the-badge)
+   
+</div>
+
+
