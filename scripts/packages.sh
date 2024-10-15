@@ -15,7 +15,6 @@ install_libraries_arch() {
 		echo "Library $1 is already installed."
 	fi
 }
-
 for package in $PACKAGES; do
 	if ! ldconfig -p | grep -q $package; then
 		install_libraries_arch $package

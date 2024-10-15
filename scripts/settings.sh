@@ -2,9 +2,27 @@
 ###
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
+PACKAGES_ARCH_SETTING=$(sed -n 's/^PackagesArch=//p' $CONF | tr -d '"' )
 ###
 
 ####### SETTINGS FUNCTIONS ##########
+SCFAAWPFunc() {
+HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
+sudo bash -c "cat > $HOOK_FILE" << 'EOF'
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Creating snapshot before $1 transaction...
+When = PreTransaction
+Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction""
+EOF
+}
+
 changeSCFAAWPFunc() {
 	clear
 	EXPECTED_STRING="isEnableSCFAAWP"
@@ -24,7 +42,9 @@ changeSCFAAWPFunc() {
 			elif [ $SCFAAWP = "no" ]; then
 				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
 				sudo mkdir /etc/pacman.d/hooks
-				SCFAAWPFunc pacman
+				for package in $PACKAGES_ARCH_SETTING; do 
+					SCFAAWPFunc $package
+				done
 				echo -e "\e[32mNow enabled\e[0m"
 			fi
 
@@ -36,6 +56,25 @@ changeSCFAAWPFunc() {
 	fi
 	echo -e "########################################################\n"
 }
+
+enableSCFAAWPFunc() {
+	EXPECTED_ENTRY="isEnableSCFAAWP"
+
+	if [[ -f  $CONF ]]; then
+		echo "$CONF file found"
+	  
+		if grep -q "$EXPECTED_ENTRY" "$CONF"; then
+			echo "The $EXPECTED_ENTRY entry was found in the file"
+		else
+			echo "The $EXPECTED_ENTRY entry was not found in the file"
+			echo "isEnableSCFAAWP=no" >> $CONF 
+			echo "$EXPECTED_ENTRY is now defined"
+		fi
+	else
+		echo "$CONF file not found"
+	fi	
+}
+
 
 isShortcut() {
 	clear
@@ -83,23 +122,6 @@ deleteScriptFunc() {
 	fi
 }
 
-SCFAAWPFunc() {
-HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
-sudo bash -c "cat > $HOOK_FILE" << 'EOF'
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Operation = Remove
-Type = Package
-Target = *
-
-[Action]
-Description = Creating snapshot before pacman transaction...
-When = PreTransaction
-Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before pacman transaction""
-EOF
-}
-
 CheckConfDistroFunc() {
 	EXPECTED_ENTRY="user_distro"
 
@@ -118,24 +140,6 @@ CheckConfDistroFunc() {
 			echo "The $EXPECTED_ENTRY entry was not found in the file"
 			DISTRO=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"' | sed 's/ Linux//')
 			echo "user_distro=\"$DISTRO\"" >> $CONF 
-			echo "$EXPECTED_ENTRY is now defined"
-		fi
-	else
-		echo "$CONF file not found"
-	fi	
-}
-
-enableSCFAAWPFunc() {
-	EXPECTED_ENTRY="isEnableSCFAAWP"
-
-	if [[ -f  $CONF ]]; then
-		echo "$CONF file found"
-	  
-		if grep -q "$EXPECTED_ENTRY" "$CONF"; then
-			echo "The $EXPECTED_ENTRY entry was found in the file"
-		else
-			echo "The $EXPECTED_ENTRY entry was not found in the file"
-			echo "isEnableSCFAAWP=no" >> $CONF 
 			echo "$EXPECTED_ENTRY is now defined"
 		fi
 	else
