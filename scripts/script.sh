@@ -1,11 +1,31 @@
 #! /bin/bash
-
 ###
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-CONF="$(realpath "$SCRIPT_DIR/../setgs.conf")"
+CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 ###
-echo -e "\e[36m####################################################################################\e[0m"
+source ./settings.sh
+EXPECTED_STRING="isEnableShortcut"
+if [[ -f $CONF ]]; then
+	echo -e "\e[36m####################################################################################\e[0m"
+	echo "$CONF file found"
 
+	if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+		echo "The $EXPECTED_STRING entry was found in the file"
+		Shortcut=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+		
+		if [ $Shortcut = "yes" ]; then
+			Shortcut_file="/usr/share/applications/turboshift.desktop"	
+			if [[ -e $Shortcut_file ]]; then
+			 	echo "file exist..."
+			else
+				createShortcut
+				echo "Creating shortcut file..."
+			fi
+		fi
+	fi
+fi
+
+echo -e "\e[36m####################################################################################\e[0m"
 cat << "EOF"
 ▗▄▄▖  ▗▄▖  ▗▄▄▖▗▖ ▗▖ ▗▄▖  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖
 ▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -25,7 +45,16 @@ cat << "EOF"
 ▗▄▄▞▘▐▙▄▄▖  █    █  ▗▄█▄▖▐▌  ▐▌▝▚▄▞▘▗▄▄▞▘
 EOF
 
-source $SCRIPT_DIR/settings.sh
+echo "---------------------------------------------------------------------------"
+CheckConfDistroFunc
+echo "---------------------------------------------------------------------------"
+enableSCFAAWPFunc
+echo "---------------------------------------------------------------------------"
+#createShortcut
+#echo "---------------------------------------------------------------------------"
+
+echo -e "\e[32mYour distro\e[0m"
+echo $DISTRO
 echo -e "\e[36m####################################################################################\e[0m"
 ###
 sudo grub-mkconfig -o /boot/grub/grub.cfg
@@ -220,70 +249,6 @@ deleteBackupFunc() {
 	;;
 	esac
 }
-
-SCFAAWPFunc() {
-HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
-sudo bash -c "cat > $HOOK_FILE" << 'EOF'
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Operation = Remove
-Type = Package
-Target = *
-
-[Action]
-Description = Creating snapshot before pacman transaction...
-When = PreTransaction
-Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before pacman transaction""
-EOF
-}
-
-changeSCFAAWPFunc() {
-	clear
-	EXPECTED_STRING="isEnableSCFAAWP"
-
-	if [[ -f $CONF ]]; then
-		echo -e "\n########################################################"
-		echo "$CONF file found"
-
-		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
-			echo "The $EXPECTED_STRING entry was found in the file"
-			SCFAAWP=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
-			
-			if [ $SCFAAWP = "yes" ]; then
-				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
-				sudo rm -rf /etc/pacman.d/hooks
-				echo -e "\e[32mNow disabled\e[0m"
-			elif [ $SCFAAWP = "no" ]; then
-				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
-				sudo mkdir /etc/pacman.d/hooks
-				SCFAAWPFunc pacman
-				echo -e "\e[32mNow enabled\e[0m"
-			fi
-
-		else
-			echo "Entry $EXPECTED_STRING not found in the file"
-		fi
-	else
-		echo "$CONF file not found"
-	fi
-	echo -e "########################################################\n"
-}
-
-deleteScriptFunc() {
-	clear
-	sudo mv /usr/share/applications/script.desktop "$(realpath "$SCRIPT_DIR/..")"
-	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications/
-	TARGET_DIR=$(realpath "$SCRIPT_DIR/..")
-	if [ -d "$TARGET_DIR" ]; then
-		sudo rm -rf /etc/pacman.d/hooks
-		rm -rf "$TARGET_DIR"
-		echo "The directory has been deleted"
-		exit
-	else
-		echo "error"
-	fi
-}
 ######################################
 
 while true; do
@@ -353,19 +318,24 @@ echo -e "\e[0m"
 		;;
 		2)
 			clear
-			echo -e "\n\e[32m| 1 - Enable/Disable snapshots for every action with the package\n\e[0m"
-			echo -e "\e[32m| 2 - Delete script\n\e[0m"
-			echo -e "\e[34m| 3 - Back\n\e[0m\n"
-			read -p "Enter value" settings_action
+			echo -e "\n\e[32m| 1 - (Enable | Disable) snapshots for every action with the package\n\e[0m"
+			echo -e "\e[32m| 2 - (Enable | Disable) shortcut\n\e[0m"
+			echo -e "\e[32m| 3 - Delete script\n\e[0m"
+			echo -e "\e[34m| 4 - Back\n\e[0m\n"
+			read -p "Enter value: " settings_action
 			case $settings_action in
 			1)
 				changeSCFAAWPFunc
 				break
 			;;
 			2)
-				deleteScriptFunc
+				isShortcut
+				break
 			;;
 			3)
+				deleteScriptFunc
+			;;
+			4)
 				clear
 				break
 			;;

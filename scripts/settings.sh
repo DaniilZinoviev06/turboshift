@@ -1,10 +1,105 @@
 #! /bin/bash
 ###
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-CONF="$(realpath "$SCRIPT_DIR/../setgs.conf")"
+CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 ###
 
 ####### SETTINGS FUNCTIONS ##########
+changeSCFAAWPFunc() {
+	clear
+	EXPECTED_STRING="isEnableSCFAAWP"
+
+	if [[ -f $CONF ]]; then
+		echo -e "\n########################################################"
+		echo "$CONF file found"
+
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			echo "The $EXPECTED_STRING entry was found in the file"
+			SCFAAWP=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+			
+			if [ $SCFAAWP = "yes" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+				sudo rm -rf /etc/pacman.d/hooks
+				echo -e "\e[32mNow disabled\e[0m"
+			elif [ $SCFAAWP = "no" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+				sudo mkdir /etc/pacman.d/hooks
+				SCFAAWPFunc pacman
+				echo -e "\e[32mNow enabled\e[0m"
+			fi
+
+		else
+			echo "Entry $EXPECTED_STRING not found in the file"
+		fi
+	else
+		echo "$CONF file not found"
+	fi
+	echo -e "########################################################\n"
+}
+
+isShortcut() {
+	clear
+	EXPECTED_STRING="isEnableShortcut"
+
+	if [[ -f $CONF ]]; then
+		echo -e "\n########################################################"
+		echo "$CONF file found"
+
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			echo "The $EXPECTED_STRING entry was found in the file"
+			Shortcut=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+			
+			if [ $Shortcut = "yes" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+				deleteShortcut
+				echo -e "\e[32mNow disabled\e[0m"
+			elif [ $Shortcut = "no" ]; then
+				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+				createShortcut
+				echo -e "\e[32mNow enabled\e[0m"
+			fi
+
+		else
+			echo "Entry $EXPECTED_STRING not found in the file"
+		fi
+	else
+		echo "$CONF file not found"
+	fi
+	echo -e "########################################################\n"
+}
+
+deleteScriptFunc() {
+	clear
+	sudo rm /usr/share/applications/turboshift.desktop
+	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications/
+	TARGET_DIR=$(realpath "$SCRIPT_DIR/..")
+	if [ -d "$TARGET_DIR" ]; then
+		sudo rm -rf /etc/pacman.d/hooks
+		rm -rf "$TARGET_DIR"
+		echo "The directory has been deleted"
+		exit
+	else
+		echo "error"
+	fi
+}
+
+SCFAAWPFunc() {
+HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
+sudo bash -c "cat > $HOOK_FILE" << 'EOF'
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Creating snapshot before pacman transaction...
+When = PreTransaction
+Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before pacman transaction""
+EOF
+}
+
 CheckConfDistroFunc() {
 	EXPECTED_ENTRY="user_distro"
 
@@ -48,42 +143,36 @@ enableSCFAAWPFunc() {
 	fi	
 }
 
-createShortcut() {
-	EXPECTED_ENTRY1="Exec"
-	EXPECTED_ENTRY2="Icon"
-	EXPECTED_ENTRY3="Terminal"
-	echo "$(whoami) ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER
-	SHORTCUT="$(pwd)/../script.desktop"
-	if [[ -f $SHORTCUT ]]; then
-		echo "$SHORTCUT file found"
-		
-		if grep -q "$EXPECTED_ENTRY1" "$SHORTCUT" || grep -q "$EXPECTED_ENTRY2" "$SHORTCUT" || grep -q "$EXPECTED_ENTRY3" "$SHORTCUT"; then
-			echo "The entry was found in the file"
-		else
-			sudo chown $(whoami) $(pwd)
-			echo "The entry was not found in the file"
-			echo "Exec=$(pwd)/script.sh" >> $SHORTCUT 
-			echo "Icon=$(realpath "$SCRIPT_DIR/../logo.jpg")" >> $SHORTCUT
-			echo "Terminal=true" >> $SHORTCUT
-		fi
-		
-		chmod +x $SHORTCUT
-		sudo mv $SHORTCUT /usr/share/applications/
-		sudo mv /usr/share/applications/timeshift-gtk.desktop $(pwd)/../
-		echo "Shortcut created"
-	else
-		echo " .desktop file does not exist or has it already been created"
-	fi
-	sudo rm /etc/sudoers.d/$(whoami)
+deleteShortcut() {
+	LOGO_FILE="/usr/share/applications/turboshift.desktop"
+    
+	sudo rm $LOGO_FILE
+	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications
 }
-#############################################
-echo "---------------------------------------------------------------------------"
-CheckConfDistroFunc
-echo "---------------------------------------------------------------------------"
-enableSCFAAWPFunc
-echo "---------------------------------------------------------------------------"
-createShortcut
-echo "---------------------------------------------------------------------------"
 
-echo -e "\e[32mYour distro\e[0m"
-echo $DISTRO
+createShortcut() {
+	LOGO_FILE="/usr/share/applications/turboshift.desktop"
+
+	SCRIPT_PATH="$(realpath script.sh)"
+	ICON_PATH="$(realpath "$SCRIPT_DIR/../logo.jpg")"
+
+	sudo bash -c "cat > $LOGO_FILE" << EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Timeshift
+Comment=Console interface Timeshift (grub auto update)
+Exec=$SCRIPT_PATH
+Icon=$ICON_PATH
+Terminal=true
+EOF
+	
+	TIMESHIFT_SHORTCUT="/usr/share/applications/timeshift-gtk.desktop"
+	if [[ -f $TIMESHIFT_SHORTCUT ]]; then
+		sudo mv /usr/share/applications/timeshift-gtk.desktop "$(realpath "$SCRIPT_DIR/..")"
+	else
+		echo -e "Timeshift shortcut not found or moved..."
+	fi
+}
+
+#############################################
