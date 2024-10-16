@@ -8,7 +8,7 @@ PACKAGES_ARCH_SETTING=$(sed -n 's/^PackagesArch=//p' $CONF | tr -d '"' )
 ####### SETTINGS FUNCTIONS ##########
 SCFAAWPFunc() {
 HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
-sudo bash -c "cat > $HOOK_FILE" << 'EOF'
+sudo bash -c "cat > $HOOK_FILE" << EOF
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -17,9 +17,9 @@ Type = Package
 Target = *
 
 [Action]
-Description = Creating snapshot before $1 transaction...
+Description = "Creating snapshot before $1 transaction..."
 When = PreTransaction
-Exec = /bin/sh -c "command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction""
+Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction"'
 EOF
 }
 
@@ -164,8 +164,8 @@ createShortcut() {
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Timeshift
-Comment=Console interface Timeshift (grub auto update)
+Name=Turboshift
+Comment=Console interface Timeshift
 Exec=$SCRIPT_PATH
 Icon=$ICON_PATH
 Terminal=true

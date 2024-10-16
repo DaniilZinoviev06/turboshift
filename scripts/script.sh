@@ -3,7 +3,7 @@
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 ###
-source ./settings.sh
+source $SCRIPT_DIR/settings.sh
 EXPECTED_STRING="isEnableShortcut"
 if [[ -f $CONF ]]; then
 	echo -e "\e[36m####################################################################################\e[0m"
