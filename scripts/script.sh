@@ -320,6 +320,7 @@ echo -e "\e[0m"
 		;;
 		2)
 			clear
+			monitoringFunc
 			break
 		;;
 		3)
