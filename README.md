@@ -38,7 +38,7 @@ chmod +x script.sh
 
 <div align="center" class="screenshot" markdown="1" style>
 
-![settings](screenshots/settings.png)
+![settings](screenshots/settings_v2.png)
 </div>
 
 ## :coffin: Uninstall
@@ -71,7 +71,7 @@ chmod +x script.sh
 
 ![screen_main](screenshots/screen_main.png)
 
-![settings](screenshots/settings.png)
+![settings](screenshots/settings_v2.png)
 
 ![screen_table](screenshots/table.png)
 
