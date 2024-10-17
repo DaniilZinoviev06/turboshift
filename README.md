@@ -1,6 +1,6 @@
 <div align="center" class="screenshots" markdown="1" style>
 
-![main screen](screenshots/screenshot.png)
+![main screen](screenshots/main.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
 
@@ -16,6 +16,7 @@ Turboshift is a handy Timeshift-based script that automates the creation of snap
 * Automatic creation of snapshots
 * Updating the GRUB bootloader
 * Automatic setting
+* Searching packages in Snapshots
 
 ## :warning: Recommendation
 `Please delete the script through the script settings`
@@ -37,7 +38,7 @@ chmod +x script.sh
 
 <div align="center" class="screenshot" markdown="1" style>
 
-![settings-screenshot](screenshots/settings.png)
+![settings](screenshots/settings.png)
 </div>
 
 ## :coffin: Uninstall
@@ -68,7 +69,13 @@ chmod +x script.sh
 
 <div align="center" class="screenshots" markdown="1" style>
 
-![screen1](screenshots/screen_main.png)
+![screen_main](screenshots/screen_main.png)
+
+![settings](screenshots/settings.png)
+
+![screen_table](screenshots/table.png)
+
+![screen_table](screenshots/search.png)
 
 ![working Arch Linux](https://img.shields.io/badge/working%20on-Arch%20Linux-blue) ![Shell](https://img.shields.io/badge/shell-bash-brightgreen) ![Timeshift based](https://img.shields.io/badge/based%20on-Timeshift-yellow)
 
