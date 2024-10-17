@@ -158,7 +158,7 @@ createShortcut() {
 	LOGO_FILE="/usr/share/applications/turboshift.desktop"
 
 	SCRIPT_PATH="$(realpath script.sh)"
-	ICON_PATH="$(realpath "$SCRIPT_DIR/../logo.jpg")"
+	ICON_PATH="$(realpath "$SCRIPT_DIR/../logo.png")"
 
 	sudo bash -c "cat > $LOGO_FILE" << EOF
 [Desktop Entry]

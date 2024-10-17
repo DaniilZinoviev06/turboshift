@@ -4,6 +4,7 @@ SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 ###
 source $SCRIPT_DIR/settings.sh
+source $SCRIPT_DIR/monitoring.sh
 EXPECTED_STRING="isEnableShortcut"
 if [[ -f $CONF ]]; then
 	echo -e "\e[36m####################################################################################\e[0m"
@@ -64,7 +65,7 @@ echo -e "\e[36m#################################################################
 ############## MAIN FUNCTIONS ##############
 createBackupFunc() {
 	clear
-	echo -e "descr: \e[34mHere you can create a snapshot that will be automatically added to grub.\e[0m"
+	echo -e "descr: \e[34mHere you can create a snapshot that will be automatically added to grub.\e[0m\n"
 	echo -e "\e[32m| 1 - Move on to create\e[0m\n"
 	echo -e "\e[34m| 2 - Back\n\e[0m\n"
 	read -p "Enter value: " sub_action
@@ -88,7 +89,7 @@ createBackupFunc() {
 
 restoreBackupFunc() {
 	clear
-	echo -e "descr: \e[34mHere you can restore your system.\e[0m"
+	echo -e "descr: \e[34mHere you can restore your system.\e[0m\n"
 	echo -e "\e[32m| 1 - Move on to restore\e[0m\n"
 	echo -e "\e[34m| 2 - Back\n\e[0m\n"
 	read -p "Enter value: " sub_action
@@ -166,7 +167,7 @@ timeshiftAutoBackupsFunc() {
 
 autoBackupFunc() {
 	clear
-	echo -e "descr: \e[34mHere you can create autobackups.\e[0m"
+	echo -e "descr: \e[34mHere you can create autobackups.\e[0m\n"
 	echo -e "\e[32m| 1 - Create snapshot (Timeshift original)\e[0m\n"
 	echo -e "\e[32m| 2 - Create snaphot (More customizable schedule)\e[0m\n"
 	echo -e "\e[32m| 3 - Clear autosnapshots (2 point)\e[0m\n"
@@ -225,7 +226,7 @@ autoBackupFunc() {
 
 deleteBackupFunc() {
 	clear
-	echo -e "descr: \e[34mHere you can delete your backup.\e[0m"
+	echo -e "descr: \e[34mHere you can delete your backup.\e[0m\n"
 	echo -e "\e[32m| 1 - Move on to delete\e[0m\n"
 	echo -e "\e[34m| 2 - Back\n\e[0m\n"
 	read -p "Enter value: " sub_action
@@ -269,9 +270,10 @@ echo -e "\e[0m"
 	echo -e "\n\e[33mUser:\e[0m $(whoami) \e[34m|\e[0m \e[33mTimeshift:\e[0m $(timeshift --version) \e[34m|\e[0m \e[33mAuthor:\e[0m https://github.com/DaniilZinoviev06 \e[34m"
 
 	echo -e "\e[32m\n| 1 - Snapshots\n\e[0m"
-	echo -e "\e[32m| 2 - Settings\n\e[0m"
+	echo -e "\e[32m| 2 - Monitoring\n\e[0m"
 	echo -e "\e[32m| 3 - Run Timeshift\n\e[0m"
-	echo -e "\e[34m| 4 - Exit\n\e[0m\n"
+	echo -e "\e[32m| 4 - Settings\n\e[0m"
+	echo -e "\e[34m| 5 - Exit\n\e[0m\n"
 	read -p "Enter value: " action
 
 	while true; do
@@ -318,6 +320,15 @@ echo -e "\e[0m"
 		;;
 		2)
 			clear
+			break
+		;;
+		3)
+			clear
+			sudo timeshift-gtk
+			break
+		;;
+		4)
+			clear
 			echo -e "\n\e[32m| 1 - (Enable | Disable) snapshots for every action with the package\n\e[0m"
 			echo -e "\e[32m| 2 - (Enable | Disable) shortcut\n\e[0m"
 			echo -e "\e[32m| 3 - Delete script\n\e[0m"
@@ -346,12 +357,7 @@ echo -e "\e[0m"
 			;;
 			esac
 		;;
-		3)
-			clear
-			sudo timeshift-gtk
-			break
-		;;
-		4)
+		5)
 			exit
 		;;
 		*)
