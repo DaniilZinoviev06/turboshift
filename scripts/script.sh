@@ -79,10 +79,11 @@ createBackupFunc() {
 		break
 	;;
 	2)
+		clear
 		break
 	;;
 	*)
-		echo -e "\e[31mInvalid value\e[0m"
+		echo -e "\n\e[31m(-_-)/ |Incorrect value|\e[0m"
 	;;
 	esac
 }
@@ -103,6 +104,7 @@ restoreBackupFunc() {
 		break
 	;;
 	2)
+		clear
 		break
 	;;
 	*)
@@ -174,53 +176,53 @@ autoBackupFunc() {
 	echo -e "\e[34m| 4 - Back\n\e[0m\n"
 	read -p "Enter value: " sub_action
 	case $sub_action in
-		1)
-			clear
-			timeshiftAutoBackupsFunc
-		;;
-		2)
-			clear
-			read -p "Comment: " comment
-			echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n"
-			read -p "Month" month
-			0 - Sunday 1 - Monday 3 - Tuesday 4 - Wednesday 5 - Thursday 6 - Friday 7 - Saturday
-			echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n"
-			read -p "Day of the week: " day
-			read -p "Enter time(e.g, 12:45): " time
+	1)
+		clear
+		timeshiftAutoBackupsFunc
+	;;
+	2)
+		clear
+		read -p "Comment: " comment
+		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n"
+		read -p "Month" month
+		0 - Sunday 1 - Monday 3 - Tuesday 4 - Wednesday 5 - Thursday 6 - Friday 7 - Saturday
+		echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n"
+		read -p "Day of the week: " day
+		read -p "Enter time(e.g, 12:45): " time
 
-			IFS=':' read -r hour minute <<< "$time"
+		IFS=':' read -r hour minute <<< "$time"
 
-			if [[ ! $hour =~ ^[0-9]+$ ]] || [[ ! $minute =~ ^[0-9]+$ ]] || [[ "$hour" -lt 0 ]] || [[ "$hour" -gt 23 ]] || [[ "$minute" -lt 0 ]] || [[ "$minute" -gt 59 ]]; then
-			    echo "Incorrect time"
-			    exit 1
-			fi
+		if [[ ! $hour =~ ^[0-9]+$ ]] || [[ ! $minute =~ ^[0-9]+$ ]] || [[ "$hour" -lt 0 ]] || [[ "$hour" -gt 23 ]] || [[ "$minute" -lt 0 ]] || [[ "$minute" -gt 59 ]]; then
+		    echo "Incorrect time"
+		    exit 1
+		fi
 
-			crontab -l > cron
-			(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo timeshift --create --comments \"$comment\"") >> cron
-			(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo grub-mkconfig -o /boot/grub/grub.cfg") >> cron
-			sudo crontab cron
-			rm cron
-			break
-		;;
-		3)
-			clear
-			echo -e "\n\e[34m### \e[32mCOMMANDS IN CRON(Script delete this commands)\e[34m ###\e[0m\n"
-			echo -e "\e[31m$(sudo crontab -l)\e[0m"
-			echo -e "\e[34m#################################################################################################\e[0m\n"
-			echo -e "\e[31m//////////////////////////////////////////////////////////////////\n"
-			sudo crontab -r
-			echo -e "\n//////////////////////////////////////////////////////////////////\e[0m"
-			echo -e "\n\e[34m### \e[32mCOMMANDS IN CRON(Now)\e[34m###\e[0m\n"
-			echo -e "\e[31m$(sudo crontab -l)\e[0m"
-			echo -e "\e[34m###############################################################\e[0m\n"
-			sleep 10
-			break
-		;;
-	       *)
-			clear
-			echo -e "\n\e[31m(-_-)/ |Incorrect value|\e[0m"
-			break
-	       	;;
+		crontab -l > cron
+		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo timeshift --create --comments \"$comment\"") >> cron
+		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo grub-mkconfig -o /boot/grub/grub.cfg") >> cron
+		sudo crontab cron
+		rm cron
+		break
+	;;
+	3)
+		clear
+		echo -e "\n\e[34m### \e[32mCOMMANDS IN CRON(Script delete this commands)\e[34m ###\e[0m\n"
+		echo -e "\e[31m$(sudo crontab -l)\e[0m"
+		echo -e "\e[34m#################################################################################################\e[0m\n"
+		echo -e "\e[31m//////////////////////////////////////////////////////////////////\n"
+		sudo crontab -r
+		echo -e "\n//////////////////////////////////////////////////////////////////\e[0m"
+		echo -e "\n\e[34m### \e[32mCOMMANDS IN CRON(Now)\e[34m###\e[0m\n"
+		echo -e "\e[31m$(sudo crontab -l)\e[0m"
+		echo -e "\e[34m###############################################################\e[0m\n"
+		sleep 10
+		break
+	;;
+       *)
+		clear
+		echo -e "\n\e[31m(-_-)/ |Incorrect value|\e[0m"
+		break
+       	;;
 	esac
 }
 
