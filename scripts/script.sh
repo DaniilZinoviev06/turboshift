@@ -5,6 +5,8 @@ CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 ###
 source $SCRIPT_DIR/settings.sh
 source $SCRIPT_DIR/monitoring.sh
+source $SCRIPT_DIR/packages.sh
+###
 EXPECTED_STRING="isEnableShortcut"
 if [[ -f $CONF ]]; then
 	echo -e "\e[36m####################################################################################\e[0m"
@@ -35,7 +37,7 @@ cat << "EOF"
 EOF
 
 echo "Install the required packages..."
-source $SCRIPT_DIR/packages.sh
+packagesMainFunc
 ###
 echo -e "\e[36m####################################################################################\e[0m"
 
@@ -58,8 +60,8 @@ echo -e "\e[32mYour distro\e[0m"
 echo $DISTRO
 echo -e "\e[36m####################################################################################\e[0m"
 ###
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-echo -e "\e[36m####################################################################################\e[0m"
+#sudo grub-mkconfig -o /boot/grub/grub.cfg
+#echo -e "\e[36m####################################################################################\e[0m"
 ###
 
 ############## MAIN FUNCTIONS ##############
@@ -183,10 +185,9 @@ autoBackupFunc() {
 	2)
 		clear
 		read -p "Comment: " comment
-		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n"
+		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n* - for every month\n"
 		read -p "Month" month
-		0 - Sunday 1 - Monday 3 - Tuesday 4 - Wednesday 5 - Thursday 6 - Friday 7 - Saturday
-		echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n"
+		echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n* - for every day"
 		read -p "Day of the week: " day
 		read -p "Enter time(e.g, 12:45): " time
 
