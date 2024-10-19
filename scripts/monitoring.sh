@@ -31,6 +31,7 @@ findPackage() {
 }
 
 monitoringFunc() {
+	CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 	PARTITION="/dev/nvme0n1p2"
 	MOUNT_DIR="/run/turboshift"
 
@@ -56,8 +57,20 @@ monitoringFunc() {
 	printf "| %-${COL_WIDTH}s %-${COL_WIDTH_PACKAGE}s |\n" "$HEADER1" "$HEADER2"
 	for SNAP in "${SNAPSHOTS[@]}"; do
 		SNAP_NAME=$(basename "$SNAP")
-		sudo chroot "$SNAP/@/" pacman -Q > "$WORK_DIR/packages_${SNAP_NAME}.txt"
+		
+		EXPECTED_STRING="user_distro"
 
+		if [[ -f $CONF ]]; then
+			if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+				USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+				if [ $USER_DISTRO = "Arch" ]; then
+					sudo chroot "$SNAP/@/" pacman -Q > "$WORK_DIR/packages_${SNAP_NAME}.txt"
+				elif [ $USER_DISTRO = "Fedora" ]; then
+					sudo chroot "$SNAP/@/" dnf list installed > "$WORK_DIR/packages_${SNAP_NAME}.txt"
+				fi
+			fi
+		fi
+		
 		PACKAGE_COUNT=$(wc -l < "$WORK_DIR/packages_${SNAP_NAME}.txt")
 		tableFunc $SNAP_NAME $PACKAGE_COUNT
 	done

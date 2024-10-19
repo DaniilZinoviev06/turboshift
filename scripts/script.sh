@@ -73,11 +73,11 @@ grubUpdFunc() {
 	if [[ -f $CONF ]]; then
 		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
 			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
-				if [ $USER_DISTRO = "Arch" ]; then
-					GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-				elif [ $USER_DISTRO = "Fedora" ]; then
-					GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
-				fi
+			if [ $USER_DISTRO = "Arch" ]; then
+				GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+			elif [ $USER_DISTRO = "Fedora" ]; then
+				GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+			fi
 		fi
 	fi
 	
