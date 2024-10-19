@@ -7,6 +7,8 @@ source $SCRIPT_DIR/settings.sh
 source $SCRIPT_DIR/monitoring.sh
 source $SCRIPT_DIR/packages.sh
 ###
+CheckConfDistroFunc
+clear
 EXPECTED_STRING="isEnableShortcut"
 if [[ -f $CONF ]]; then
 	echo -e "\e[36m####################################################################################\e[0m"
