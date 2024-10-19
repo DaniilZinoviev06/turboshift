@@ -62,11 +62,28 @@ echo -e "\e[32mYour distro\e[0m"
 echo $DISTRO
 echo -e "\e[36m####################################################################################\e[0m"
 ###
-#sudo grub-mkconfig -o /boot/grub/grub.cfg
+#grubUpdFunc
 #echo -e "\e[36m####################################################################################\e[0m"
 ###
 
 ############## MAIN FUNCTIONS ##############
+grubUpdFunc() {
+	EXPECTED_STRING="user_distro"
+	
+	if [[ -f $CONF ]]; then
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+				if [ $USER_DISTRO = "Arch" ]; then
+					GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+				elif [ $USER_DISTRO = "Fedora" ]; then
+					GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+				fi
+		fi
+	fi
+	
+	echo $GU
+}
+
 createBackupFunc() {
 	clear
 	echo -e "descr: \e[34mHere you can create a snapshot that will be automatically added to grub.\e[0m\n"
@@ -79,7 +96,7 @@ createBackupFunc() {
 		echo -e "\n"
 		read -p "Enter comment: " comment
 		sudo timeshift --create --comments "$comment"
-		sudo grub-mkconfig -o /boot/grub/grub.cfg
+		grubUpdFunc
 		break
 	;;
 	2)
@@ -132,31 +149,31 @@ timeshiftAutoBackupsFunc() {
 		1)
 			clear
 			sudo timeshift --create --tags H
-			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			grubUpdFunc
 			break
 		;;
 		2)
 			clear
 			sudo timeshift --create --tags D
-			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			grubUpdFunc
 			break
 		;;
 		3)
 			clear
 			sudo timeshift --create --tags W
-			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			grubUpdFunc
 			break
 		;;
 		4)
 			clear
 			sudo timeshift --create --tags M
-			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			grubUpdFunc
 			break
 		;;
 		5)
 			clear
 			sudo timeshift --create --tags B
-			sudo grub-mkconfig -o /boot/grub/grub.cfg
+			grubUpdFunc
 			break
 		;;
 		6)
@@ -186,9 +203,11 @@ autoBackupFunc() {
 	;;
 	2)
 		clear
+		gr_do=$(grubUpdFunc)
+		echo -e "$gr_do\n"
 		read -p "Comment: " comment
 		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n* - for every month\n"
-		read -p "Month" month
+		read -p "Month: " month
 		echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n* - for every day"
 		read -p "Day of the week: " day
 		read -p "Enter time(e.g, 12:45): " time
@@ -202,7 +221,7 @@ autoBackupFunc() {
 
 		crontab -l > cron
 		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo timeshift --create --comments \"$comment\"") >> cron
-		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo grub-mkconfig -o /boot/grub/grub.cfg") >> cron
+		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day "$gr_do"") >> cron
 		sudo crontab cron
 		rm cron
 		break
@@ -302,7 +321,7 @@ echo -e "\e[0m"
 					clear
 					echo -e "\e[34m################################## \e[32mBACKUPS\e[34m ##################################\e[0m"
 					sudo timeshift --list
-					echo -e "\e[34m#####################################################################################\e[0m"
+					echo -e "\e[34m#############################################################################\e[0m"
 					break
 				;;
 
