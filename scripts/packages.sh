@@ -46,6 +46,14 @@ packagesMainFunc() {
 				fi
 			done
 			
+			if [ $USER_DISTRO = "Fedora" ]; then
+				if ! dnf list installed $1 &> /dev/null; then
+					sudo dnf install -y dnf-plugins-core
+				else
+					echo "Library $1 is already installed."
+				fi
+			fi
+			
 		else
 			echo "Entry $EXPECTED_STRING not found in the file"
 		fi

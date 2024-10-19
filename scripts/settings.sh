@@ -3,10 +3,61 @@
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"
 PACKAGES_ARCH_SETTING=$(sed -n 's/^PackagesArch=//p' $CONF | tr -d '"' )
+PACKAGES_FEDORA_SETTING=$(sed -n 's/^PackagesFedora=//p' $CONF | tr -d '"' )
 ###
 
 ####### SETTINGS FUNCTIONS ##########
+CheckConfDistroFunc() {
+	EXPECTED_ENTRY="user_distro"
+
+	if [[ -f  $CONF ]]; then
+		echo "$CONF file found"
+	  
+		if grep -q "$EXPECTED_ENTRY" "$CONF"; then
+			echo "The $EXPECTED_ENTRY entry was found in the file"
+			DISTRO=$user_distro
+			if [ -z "$DISTRO" ]; then
+				DISTRO=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"' | sed 's/ Linux//')
+				sed -i "/^user_distro=/s/=.*/=$DISTRO/" "$CONF"
+				echo "$EXPECTED_ENTRY is defined"
+			fi
+		else
+			echo "The $EXPECTED_ENTRY entry was not found in the file"
+			DISTRO=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"' | sed 's/ Linux//')
+			echo "user_distro=\"$DISTRO\"" >> $CONF 
+			echo "$EXPECTED_ENTRY is now defined"
+		fi
+	else
+		echo "$CONF file not found"
+	fi	
+}
+
+grubUpdFunc() {
+	EXPECTED_STRING="user_distro"
+	
+	if [[ -f $CONF ]]; then
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+			if [ $USER_DISTRO = "Arch" ]; then
+				GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+			elif [ $USER_DISTRO = "Fedora" ]; then
+				GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
+			fi
+		fi
+	fi
+	
+	echo $GU
+}
+
 SCFAAWPFunc() {
+gr_do=$(grubUpdFunc)
+
+EXPECTED_STRING="user_distro"
+	
+if [[ -f $CONF ]]; then
+	if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+		USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+		if [ $USER_DISTRO = "Arch" ]; then
 HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
 sudo bash -c "cat > $HOOK_FILE" << EOF
 [Trigger]
@@ -19,8 +70,26 @@ Target = *
 [Action]
 Description = "Creating snapshot before $1 transaction..."
 When = PreTransaction
-Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction"'
+Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction" && $gr_do'
 EOF
+		elif [ $USER_DISTRO = "Fedora" ]; then
+HOOK_FILE="/etc/dnf/plugins/hooks/turboshift-$1.hook"
+sudo bash -c "cat > $HOOK_FILE" << EOF
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = "Creating snapshot before $1 transaction..."
+When = PreTransaction
+Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction" && $gr_do'
+EOF
+	fi
+fi
+fi
 }
 
 changeSCFAAWPFunc() {
@@ -35,17 +104,39 @@ changeSCFAAWPFunc() {
 			echo "The $EXPECTED_STRING entry was found in the file"
 			SCFAAWP=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
 			
-			if [ $SCFAAWP = "yes" ]; then
-				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
-				sudo rm -rf /etc/pacman.d/hooks
-				echo -e "\e[32mNow disabled\e[0m"
-			elif [ $SCFAAWP = "no" ]; then
-				sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
-				sudo mkdir /etc/pacman.d/hooks
-				for package in $PACKAGES_ARCH_SETTING; do 
-					SCFAAWPFunc $package
-				done
-				echo -e "\e[32mNow enabled\e[0m"
+			EXPECTED_STRING="user_distro"
+	
+			if [[ -f $CONF ]]; then
+				if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+					USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+					if [ $USER_DISTRO = "Arch" ]; then
+						if [ $SCFAAWP = "yes" ]; then
+							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+							sudo rm -rf /etc/pacman.d/hooks
+							echo -e "\e[32mNow disabled\e[0m"
+						elif [ $SCFAAWP = "no" ]; then
+							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+							sudo mkdir /etc/pacman.d/hooks
+							for package in $PACKAGES_ARCH_SETTING; do 
+								SCFAAWPFunc $package
+							done
+							echo -e "\e[32mNow enabled\e[0m"
+						fi
+					elif [ $USER_DISTRO = "Fedora" ]; then
+						if [ $SCFAAWP = "yes" ]; then
+							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
+							sudo rm -rf /etc/dnf/plugins/hooks
+							echo -e "\e[32mNow disabled\e[0m"
+						elif [ $SCFAAWP = "no" ]; then
+							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
+							sudo mkdir -p /etc/dnf/plugins/hooks/
+							for package in $PACKAGES_FEDORA_SETTING; do 
+								SCFAAWPFunc $package
+							done
+							echo -e "\e[32mNow enabled\e[0m"
+						fi
+					fi
+				fi
 			fi
 
 		else
@@ -120,31 +211,6 @@ deleteScriptFunc() {
 	else
 		echo "error"
 	fi
-}
-
-CheckConfDistroFunc() {
-	EXPECTED_ENTRY="user_distro"
-
-	if [[ -f  $CONF ]]; then
-		echo "$CONF file found"
-	  
-		if grep -q "$EXPECTED_ENTRY" "$CONF"; then
-			echo "The $EXPECTED_ENTRY entry was found in the file"
-			DISTRO=$user_distro
-			if [ -z "$DISTRO" ]; then
-				DISTRO=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"' | sed 's/ Linux//')
-				sed -i "/^user_distro=/s/=.*/=$DISTRO/" "$CONF"
-				echo "$EXPECTED_ENTRY is defined"
-			fi
-		else
-			echo "The $EXPECTED_ENTRY entry was not found in the file"
-			DISTRO=$(grep '^NAME=' /etc/os-release | cut -d= -f2 | tr -d '"' | sed 's/ Linux//')
-			echo "user_distro=\"$DISTRO\"" >> $CONF 
-			echo "$EXPECTED_ENTRY is now defined"
-		fi
-	else
-		echo "$CONF file not found"
-	fi	
 }
 
 deleteShortcut() {

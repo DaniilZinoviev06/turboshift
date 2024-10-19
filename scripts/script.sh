@@ -67,23 +67,6 @@ echo -e "\e[36m#################################################################
 ###
 
 ############## MAIN FUNCTIONS ##############
-grubUpdFunc() {
-	EXPECTED_STRING="user_distro"
-	
-	if [[ -f $CONF ]]; then
-		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
-			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
-			if [ $USER_DISTRO = "Arch" ]; then
-				GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-			elif [ $USER_DISTRO = "Fedora" ]; then
-				GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
-			fi
-		fi
-	fi
-	
-	echo $GU
-}
-
 createBackupFunc() {
 	clear
 	echo -e "descr: \e[34mHere you can create a snapshot that will be automatically added to grub.\e[0m\n"
@@ -203,8 +186,6 @@ autoBackupFunc() {
 	;;
 	2)
 		clear
-		gr_do=$(grubUpdFunc)
-		echo -e "$gr_do\n"
 		read -p "Comment: " comment
 		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n* - for every month\n"
 		read -p "Month: " month
