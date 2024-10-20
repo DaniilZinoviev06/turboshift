@@ -104,13 +104,15 @@ changeSCFAAWPFunc() {
 			echo "The $EXPECTED_STRING entry was found in the file"
 			SCFAAWP=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
 			
-			EXPECTED_STRING="user_distro"
+			EXPECTED_DISTRO="user_distro"
+			EXPECTED_STRING="isEnableSCFAAWP"
 	
 			if [[ -f $CONF ]]; then
 				if grep -q "^$EXPECTED_STRING=" "$CONF"; then
-					USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+					USER_DISTRO=$(sed -n "s/^$EXPECTED_DISTRO=\(.*\)/\1/p" "$CONF")
 					if [ $USER_DISTRO = "Arch" ]; then
 						if [ $SCFAAWP = "yes" ]; then
+							echo
 							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=no/" "$CONF"
 							sudo rm -rf /etc/pacman.d/hooks
 							echo -e "\e[32mNow disabled\e[0m"
