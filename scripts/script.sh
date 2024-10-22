@@ -8,7 +8,6 @@ source $SCRIPT_DIR/monitoring.sh
 source $SCRIPT_DIR/packages.sh
 ###
 CheckConfDistroFunc
-clear
 EXPECTED_STRING="isEnableShortcut"
 if [[ -f $CONF ]]; then
 	echo -e "\e[36m####################################################################################\e[0m"
@@ -199,7 +198,9 @@ autoBackupFunc() {
 		    echo "Incorrect time"
 		    exit 1
 		fi
-
+		
+		gr_do=$(grubUpdFuncCronie7g)
+		
 		crontab -l > cron
 		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day sudo timeshift --create --comments \"$comment\"") >> cron
 		(crontab -l 2>/dev/null; echo "$minute $hour * $month $day "$gr_do"") >> cron

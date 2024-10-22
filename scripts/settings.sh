@@ -12,7 +12,7 @@ CheckConfDistroFunc() {
 
 	if [[ -f  $CONF ]]; then
 		echo "$CONF file found"
-	  
+		
 		if grep -q "$EXPECTED_ENTRY" "$CONF"; then
 			echo "The $EXPECTED_ENTRY entry was found in the file"
 			DISTRO=$user_distro
@@ -39,6 +39,21 @@ grubUpdFunc() {
 		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
 			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
 			if [ $USER_DISTRO = "Arch" ]; then
+				sudo grub-mkconfig -o /boot/grub/grub.cfg
+			elif [ $USER_DISTRO = "Fedora" ]; then
+				sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+			fi
+		fi
+	fi
+}
+
+grubUpdFuncCronie() {
+	EXPECTED_STRING="user_distro"
+	
+	if [[ -f $CONF ]]; then
+		if grep -q "^$EXPECTED_STRING=" "$CONF"; then
+			USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
+			if [ $USER_DISTRO = "Arch" ]; then
 				GU="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 			elif [ $USER_DISTRO = "Fedora" ]; then
 				GU="sudo grub2-mkconfig -o /boot/grub2/grub.cfg"
@@ -58,7 +73,7 @@ if [[ -f $CONF ]]; then
 	if grep -q "^$EXPECTED_STRING=" "$CONF"; then
 		USER_DISTRO=$(sed -n "s/^$EXPECTED_STRING=\(.*\)/\1/p" "$CONF")
 		if [ $USER_DISTRO = "Arch" ]; then
-HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
+			HOOK_FILE="/etc/pacman.d/hooks/turboshift-$1.hook"
 sudo bash -c "cat > $HOOK_FILE" << EOF
 [Trigger]
 Operation = Install
@@ -73,7 +88,7 @@ When = PreTransaction
 Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction" && $gr_do'
 EOF
 		elif [ $USER_DISTRO = "Fedora" ]; then
-HOOK_FILE="/etc/dnf/plugins/hooks/turboshift-$1.hook"
+			HOOK_FILE="/etc/dnf/plugins/hooks/turboshift-$1.hook"
 sudo bash -c "cat > $HOOK_FILE" << EOF
 [Trigger]
 Operation = Install
@@ -87,8 +102,8 @@ Description = "Creating snapshot before $1 transaction..."
 When = PreTransaction
 Exec = /bin/sh -c 'command -v timeshift >/dev/null 2>&1 && timeshift --create --comments "Automatic snapshot before $1 transaction" && $gr_do'
 EOF
+		fi
 	fi
-fi
 fi
 }
 
@@ -119,7 +134,7 @@ changeSCFAAWPFunc() {
 						elif [ $SCFAAWP = "no" ]; then
 							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
 							sudo mkdir /etc/pacman.d/hooks
-							for package in $PACKAGES_ARCH_SETTING; do 
+							for package in $PACKAGES_ARCH_SETTING; do
 								SCFAAWPFunc $package
 							done
 							echo -e "\e[32mNow enabled\e[0m"
@@ -132,7 +147,7 @@ changeSCFAAWPFunc() {
 						elif [ $SCFAAWP = "no" ]; then
 							sudo sed -i "s/^$EXPECTED_STRING=.*/$EXPECTED_STRING=yes/" "$CONF"
 							sudo mkdir -p /etc/dnf/plugins/hooks/
-							for package in $PACKAGES_FEDORA_SETTING; do 
+							for package in $PACKAGES_FEDORA_SETTING; do
 								SCFAAWPFunc $package
 							done
 							echo -e "\e[32mNow enabled\e[0m"
@@ -228,7 +243,7 @@ createShortcut() {
 	SCRIPT_PATH="$(realpath script.sh)"
 	ICON_PATH="$(realpath "$SCRIPT_DIR/../logo.png")"
 
-	sudo bash -c "cat > $LOGO_FILE" << EOF
+sudo bash -c "cat > $LOGO_FILE" << EOF
 [Desktop Entry]
 Version=1.0
 Type=Application

@@ -2,11 +2,10 @@
 
 ###
 PACKAGES="timeshift cronie grub-btrfs vi"
+PACKAGES_FEDORA="timeshift cronie grub2 vi dnf-plugins-core"
 USER=$(whoami)
 ###
 #echo "Текущий пользователь: $USER"
-
-echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$USER
 
 install_libraries_fedora() {
 	if ! dnf list installed $1 &> /dev/null; then
@@ -45,15 +44,6 @@ packagesMainFunc() {
 					echo "Library $package is already installed."
 				fi
 			done
-			
-			if [ $USER_DISTRO = "Fedora" ]; then
-				if ! dnf list installed $1 &> /dev/null; then
-					sudo dnf install -y dnf-plugins-core
-				else
-					echo "Library $1 is already installed."
-				fi
-			fi
-			
 		else
 			echo "Entry $EXPECTED_STRING not found in the file"
 		fi
@@ -61,5 +51,3 @@ packagesMainFunc() {
 		echo "$CONF file not found"
 	fi
 }
-
-sudo rm /etc/sudoers.d/$USER
