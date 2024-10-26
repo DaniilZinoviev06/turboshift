@@ -169,7 +169,7 @@ timeshiftAutoBackupsFunc() {
 
 autoBackupFunc() {
 	clear
-	echo -e "descr: \e[34mHere you can create autobackups.\e[0m\n"
+	echo -e "descr: \e[34mHere you can create snapshots\e[0m\n"
 	echo -e "\e[32m| 1 - Create snapshot (Timeshift original)\e[0m\n"
 	echo -e "\e[32m| 2 - Create snaphot (More customizable schedule)\e[0m\n"
 	echo -e "\e[32m| 3 - Clear autosnapshots (2 point)\e[0m\n"
@@ -181,12 +181,20 @@ autoBackupFunc() {
 		timeshiftAutoBackupsFunc
 	;;
 	2)
+		cron_status=$(systemctl is-active cronie)
+		if [[ $cron_status != "active" ]]; then
+			sudo systemctl enable cronie
+			sudo systemctl start cronie
+		fi
+		
 		clear
 		read -p "Comment: " comment
 		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n* - Every month"
 		read -p "Month: " month
+		clear
 		echo -e "0 - Sunday\n1 - Monday\n2 - Tuesday\n3 - Wednesday\n4 - Thursday\n5 - Friday\n6 - Saturday\n* - Every day"
 		read -p "Day of the week: " day
+		clear
 		read -p "Enter time(e.g, 12:45): " time
 
 		IFS=':' read -r hour minute <<< "$time"
@@ -235,7 +243,7 @@ deleteBackupFunc() {
 	case $sub_action in
 	1)
 		clear
-		echo -e "\e[34m################################## \e[32mBACKUPS\e[34m ##################################\e[0m"
+		echo -e "\e[34m################################## \e[32mSNAPSHOTS\e[34m ##################################\e[0m"
 		echo -e "\e[32m$(sudo timeshift --list)\e[0m"
 		echo -e "\e[34m#####################################################################################\e[0m\n"
 		read -p "Enter backup name (name! Not comment!): " name
@@ -296,7 +304,7 @@ echo -e "\e[0m"
 
 				2)
 					clear
-					echo -e "\e[34m################################## \e[32mBACKUPS\e[34m ##################################\e[0m"
+					echo -e "\e[34m################################## \e[32mSNAPSHOTS\e[34m ##################################\e[0m"
 					sudo timeshift --list
 					echo -e "\e[34m#####################################################################################\e[0m"
 					break
