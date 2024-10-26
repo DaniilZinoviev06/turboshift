@@ -183,10 +183,9 @@ autoBackupFunc() {
 	2)
 		clear
 		read -p "Comment: " comment
-		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n"
-		read -p "Month" month
-		0 - Sunday 1 - Monday 3 - Tuesday 4 - Wednesday 5 - Thursday 6 - Friday 7 - Saturday
-		echo -e "0 - Sunday\n1 - Monday\n3 - Tuesday\n4 - Wednesday\n5 - Thursday\n6 - Friday\n7 - Saturday\n"
+		echo -e "1 - January\n2 - February\n3 - March\n4 - April\n5 - May\n6 - June\n7 - July\n8 - August\n9 - September\n10 - October\n11 - November\n12 - December\n* - Every month"
+		read -p "Month: " month
+		echo -e "0 - Sunday\n1 - Monday\n2 - Tuesday\n3 - Wednesday\n4 - Thursday\n5 - Friday\n6 - Saturday\n* - Every day"
 		read -p "Day of the week: " day
 		read -p "Enter time(e.g, 12:45): " time
 
@@ -286,7 +285,7 @@ echo -e "\e[0m"
 			echo -e "\e[32m| 2 - View snapshots\n\e[0m"
 			echo -e "\e[32m| 3 - Restore system\n\e[0m"
 			echo -e "\e[32m| 4 - Set up auto snapshots\n\e[0m"
-			echo -e "\e[32m| 5 - Delete backup\n\e[0m"
+			echo -e "\e[32m| 5 - Delete snapshot\n\e[0m"
 			echo -e "\e[34m| 6 - Back\n\e[0m\n"
 			read -p "Enter value: " sub_action
 
