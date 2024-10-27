@@ -63,6 +63,14 @@ chmod +x script.sh
    ```
 </details>
 
+## :penguin: Distributions
+
+<div align="center" class="screenshots" markdown="1" style>
+
+![arch](screenshots/arch.png)
+   
+</div>
+
 ## 🖥️: Screenshots
 
 <div align="center" class="screenshots" markdown="1" style>
