@@ -1,4 +1,5 @@
 #! /bin/bash
+
 ###
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 CONF="$(realpath "$SCRIPT_DIR/../conf.conf")"

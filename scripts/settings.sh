@@ -110,7 +110,7 @@ isShortcut() {
 deleteScriptFunc() {
 	clear
 	sudo rm /usr/share/applications/turboshift.desktop
-	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications/
+	sudo sed -i '/^NoDisplay=true$/d' /usr/share/applications/timeshift-gtk.desktop
 	TARGET_DIR=$(realpath "$SCRIPT_DIR/..")
 	if [ -d "$TARGET_DIR" ]; then
 		sudo rm -rf /etc/pacman.d/hooks
@@ -151,7 +151,7 @@ deleteShortcut() {
 	LOGO_FILE="/usr/share/applications/turboshift.desktop"
     
 	sudo rm $LOGO_FILE
-	sudo mv "$(realpath "$SCRIPT_DIR/../timeshift-gtk.desktop")" /usr/share/applications
+	sudo sed -i '/^NoDisplay=true$/d' /usr/share/applications/timeshift-gtk.desktop
 }
 
 createShortcut() {
@@ -173,7 +173,8 @@ EOF
 	
 	TIMESHIFT_SHORTCUT="/usr/share/applications/timeshift-gtk.desktop"
 	if [[ -f $TIMESHIFT_SHORTCUT ]]; then
-		sudo mv /usr/share/applications/timeshift-gtk.desktop "$(realpath "$SCRIPT_DIR/..")"
+		#sudo mv /usr/share/applications/timeshift-gtk.desktop "$(realpath "$SCRIPT_DIR/..")"
+		sudo sed -i '$a NoDisplay=true' /usr/share/applications/timeshift-gtk.desktop
 	else
 		echo -e "Timeshift shortcut not found or moved..."
 	fi
