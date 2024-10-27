@@ -55,7 +55,7 @@ chmod +x script.sh
    
    </br>
    
-   ## If you deleted the script yourself and noticed problems. </br>
+   # If you deleted the script yourself and noticed problems. </br>
 
    ## Problem with the Timeshift shortcut
 
