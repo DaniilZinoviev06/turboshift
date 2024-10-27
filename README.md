@@ -55,12 +55,16 @@ chmod +x script.sh
    
    </br>
    
-   Go to the directory with the project. Next: </br>
-   ```bash
-   sudo mv timeshift-gtk.desktop /usr/share/applications/
-   sudo mv /usr/share/applications/script.desktop /your/path/to/turboshift
-   sudo rm -rf /your/path/to/turboshift
-   ```
+   ## If you deleted the script yourself and noticed problems. </br>
+
+   ## Problem with the Timeshift shortcut
+
+   > /usr/share/applications/timeshift-gtk.desktop Open in an editor and remove the line NoDisplay=true
+
+   
+   ## Problem with snapshots after each action with the package manager
+   
+   > /etc/pacman.d/ Go to and remove /hooks
 </details>
 
 ## :penguin: Distributions
