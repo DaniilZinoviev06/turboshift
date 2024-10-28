@@ -59,12 +59,15 @@ chmod +x script.sh
 
    ## Problem with the Timeshift shortcut
 
-   > /usr/share/applications/timeshift-gtk.desktop Open in an editor and remove the line NoDisplay=true
-
+   > /usr/share/applications/timeshift-gtk.desktop
    
+   Open in an editor and remove the line `NoDisplay=true`
+
    ## Problem with snapshots after each action with the package manager
    
-   > /etc/pacman.d/ Go to and remove /hooks
+   > /etc/pacman.d/
+   
+   Go to and remove `/hooks`
 </details>
 
 ## :penguin: Distributions
