@@ -28,7 +28,6 @@ cd turboshift
 ```
 Next, run the `script.sh` to install the necessary dependencies and initial configuration
 ```bash
-chmod +x script.desktop
 cd scripts
 chmod +x script.sh
 ./script.sh
